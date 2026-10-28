@@ -28,7 +28,7 @@ Configure processes in an **oxfile** (`oxfile.toml`) or import PM2 ecosystem fil
 | --- | --- |
 | **Oxmgr daemon** | Source of truth for supervised processes on this host |
 | **`oxmgr list --json`** | Stable JSON snapshot Oxmgr already exposes for scripting |
-| **oxmcp (this repo)** | MCP tool `list_managed_processes`—curated summaries for agents, optional raw Oxmgr records |
+| **oxmcp (this repo)** | MCP tool `list_managed_services`—curated summaries for agents, optional raw Oxmgr records |
 
 Oxmcp does **not** start, stop, or reload processes; it only **reads** local daemon state. The MCP server must run on the **same machine** as Oxmgr.
 
@@ -43,7 +43,49 @@ oxmgr list --json
 
 ## Install oxmcp
 
-Requires [Bun](https://bun.com) and a working Oxmgr daemon (see above).
+Requires a working **Oxmgr** daemon on the same machine (see above). Pick the path that fits how you work:
+
+| Path | Best for | You get |
+| --- | --- | --- |
+| **Binary install** | Agents and daily MCP use without a clone | `oxmcp` on `PATH` (~110 MB standalone executable; no Bun at runtime) |
+| **Git clone + Bun** | Contributors, fixture stack, hacking on oxmcp | Repo checkout; run via `bun index.ts` |
+
+### Binary install (recommended for MCP users)
+
+Installs a prebuilt release to `~/.local/bin/oxmcp` (override with `OXMCP_INSTALL_DIR`). Verifies **SHA256SUMS** from the GitHub release. Re-run the same command to upgrade.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/assertnotnull/oxmcp/master/scripts/install.sh | bash
+```
+
+Pin a version: `OXMCP_VERSION=v0.1.0 curl -fsSL … | bash` (or `OXMCP_VERSION=0.1.0`).
+
+After install, paste MCP config from:
+
+```bash
+oxmcp print-mcp-config
+```
+
+Example snippet (no `cwd` required):
+
+```json
+{
+  "mcpServers": {
+    "oxmcp": {
+      "command": "/home/user/.local/bin/oxmcp",
+      "args": []
+    }
+  }
+}
+```
+
+**Platforms:** Linux x64, macOS arm64, macOS x64. Windows is not packaged yet.
+
+Binaries are published on [GitHub Releases](https://github.com/assertnotnull/oxmcp/releases) when a maintainer pushes a matching `v*.*.*` tag (semver aligned with `oxmcp --version`).
+
+### Git clone (contributors)
+
+Requires [Bun](https://bun.com).
 
 ```bash
 git clone git@github.com:assertnotnull/oxmcp.git
@@ -53,17 +95,33 @@ bun install
 
 ## MCP setup
 
-**Oxmcp** speaks MCP over **stdio**. Spawn it from the **repository root** so `bun index.ts` resolves correctly.
+**Oxmcp** speaks MCP over **stdio**.
+
+- **Binary install:** point your MCP client at `oxmcp` (or the full path from `oxmcp print-mcp-config`). No repository `cwd` is required.
+- **Git clone:** spawn from the **repository root** so `bun index.ts` resolves correctly.
 
 ### OMP (oh-my-pi)
 
-This repo ships [`.omp/mcp.json`](./.omp/mcp.json). Enable **oxmcp** in your OMP agent config, or merge the `mcpServers.oxmcp` entry into your user/project MCP config. Open the project at the `oxmcp` root (or set `cwd` to that path when spawning).
+This repo ships [`.omp/mcp.json`](./.omp/mcp.json). Enable **oxmcp** in your OMP agent config, or merge the `mcpServers.oxmcp` entry into your user/project MCP config. For a global binary, use `oxmcp print-mcp-config`. For a clone, open the project at the `oxmcp` root (or set `cwd` to that path when spawning).
 
 ### Cursor
 
-This repo ships [`.cursor/mcp.json`](./.cursor/mcp.json) with `"cwd": "${workspaceFolder}"`. **Open the clone at the repository root** (the folder that contains `index.ts`), then reload MCP in Cursor.
+**With a binary on `PATH`**, add to user MCP settings:
 
-To add manually elsewhere:
+```json
+{
+  "mcpServers": {
+    "oxmcp": {
+      "command": "oxmcp",
+      "args": []
+    }
+  }
+}
+```
+
+**From a git clone**, this repo ships [`.cursor/mcp.json`](./.cursor/mcp.json) with `"cwd": "${workspaceFolder}"`. **Open the clone at the repository root** (the folder that contains `index.ts`), then reload MCP in Cursor.
+
+To add manually from a clone elsewhere:
 
 ```json
 {
@@ -79,15 +137,26 @@ To add manually elsewhere:
 
 ### Verify
 
+From a clone:
+
 ```bash
 bun run validate
 ```
 
-You should see `list_managed_processes` in the inspector output. Smoke-test a tool call:
+With a installed binary (stdio smoke test):
 
 ```bash
-bunx @modelcontextprotocol/inspector --cli bun index.ts --protocol-era modern --method tools/call --tool-name list_managed_processes
+oxmcp --version
+bunx @modelcontextprotocol/inspector --cli oxmcp --protocol-era modern --method tools/list
 ```
+
+You should see `list_managed_services` in the inspector output. Smoke-test a tool call:
+
+```bash
+bunx @modelcontextprotocol/inspector --cli oxmcp --protocol-era modern --method tools/call --tool-name list_managed_services
+```
+
+For clone-based dev, replace `oxmcp` with `bun index.ts` in the inspector commands above.
 
 ## Local fixture stack (optional)
 
@@ -106,11 +175,12 @@ Run the server in the foreground (stdio; normally the agent spawns it):
 bun run index.ts
 ```
 
-Type check and test:
+Type check, test, and build a local standalone binary:
 
 ```bash
 bun check
 bun test
+bun run build:bin   # writes dist/oxmcp
 ```
 
 Format: `bun fmt`.

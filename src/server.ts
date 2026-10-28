@@ -5,6 +5,7 @@ import {
 } from "./list-managed-processes.ts";
 import type { OxmgrListPort } from "./oxmgr-list-port.ts";
 import { OxmgrListError } from "./oxmgr-list-port.ts";
+import { OXMCP_VERSION } from "./version.ts";
 
 export type OxmcpServerDeps = {
   listPort: OxmgrListPort;
@@ -12,7 +13,7 @@ export type OxmcpServerDeps = {
 
 export function createOxmcpServer(deps: OxmcpServerDeps): McpServer {
   const server = new McpServer(
-    { name: "oxmcp", version: "0.1.0" },
+    { name: "oxmcp", version: OXMCP_VERSION },
     { capabilities: { tools: {} } },
   );
 

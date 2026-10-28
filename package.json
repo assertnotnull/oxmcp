@@ -1,5 +1,6 @@
 {
   "name": "oxmcp",
+  "version": "0.1.0",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -8,6 +9,7 @@
   ],
   "scripts": {
     "dev": "bun index.ts",
+    "build:bin": "bun build --compile --outfile=dist/oxmcp index.ts",
     "test": "bun test",
     "validate": "bunx @modelcontextprotocol/inspector --cli bun index.ts --protocol-era modern --method tools/list",
     "typecheck": "bun check"
