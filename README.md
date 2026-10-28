@@ -1,5 +1,9 @@
 # oxmcp
 
+Read-only MCP tools for local **Oxmgr** **managed process** status. Domain vocabulary: [`GLOSSARY.md`](./GLOSSARY.md).
+
+**Specs and agent-ready work** live as [GitHub issues](https://github.com/assertnotnull/oxmcp/issues) (label `ready-for-agent`). Agent/tooling conventions: [`docs/agents/issue-tracker.md`](./docs/agents/issue-tracker.md).
+
 To install dependencies:
 
 ```bash
