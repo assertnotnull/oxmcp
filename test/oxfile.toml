@@ -1,0 +1,24 @@
+version = 1
+
+[[apps]]
+name = "service-A"
+command = "bun test/service/src/index.ts"
+health_cmd = "curl -fsS http://127.0.0.1:3001/health"
+health_interval_secs = 3
+health_timeout_secs = 2
+health_max_failures = 2
+
+[apps.env]
+PORT = "3001"
+
+
+[[apps]]
+name = "service-B"
+command = "bun test/service/src/index.ts"
+health_cmd = "curl -fsS http://127.0.0.1:3002/health"
+health_interval_secs = 3
+health_timeout_secs = 2
+health_max_failures = 2
+
+[apps.env]
+PORT = "3002"
