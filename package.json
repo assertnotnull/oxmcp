@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "bun index.ts",
+    "test": "bun test",
     "validate": "bunx @modelcontextprotocol/inspector --cli bun index.ts --protocol-era modern --method tools/list",
     "typecheck": "bun check"
   },
