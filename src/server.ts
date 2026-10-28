@@ -17,11 +17,11 @@ export function createOxmcpServer(deps: OxmcpServerDeps): McpServer {
   );
 
   server.registerTool(
-    "list_managed_processes",
+    "list_managed_services",
     {
-      title: "List managed processes",
+      title: "List managed services",
       description:
-        "List Oxmgr managed processes on the local daemon with runtime status, health status, and metrics.",
+        "List Oxmgr managed developer services on the local daemon with runtime status, health status, and metrics.",
       inputSchema: listManagedProcessesInput,
     },
     async (input) => {
