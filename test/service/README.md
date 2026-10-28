@@ -1,9 +1,10 @@
-To install dependencies:
+To install dependencies (from repo root):
+
 ```sh
 bun install
 ```
 
-To run:
+To run (from this directory):
 ```sh
 bun run dev
 ```

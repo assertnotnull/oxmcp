@@ -26,7 +26,9 @@ This repo ships [`.omp/mcp.json`](./.omp/mcp.json). Enable **oxmcp** in your OMP
 
 ### Cursor
 
-Add a server under `.cursor/mcp.json` in this repo (or your user MCP settings). Example:
+This repo ships [`.cursor/mcp.json`](./.cursor/mcp.json) with `"cwd": "${workspaceFolder}"`. **Open the clone at the repository root** (the folder that contains `index.ts`), then reload MCP in Cursor.
+
+To add manually elsewhere:
 
 ```json
 {
@@ -34,13 +36,11 @@ Add a server under `.cursor/mcp.json` in this repo (or your user MCP settings). 
     "oxmcp": {
       "command": "bun",
       "args": ["index.ts"],
-      "cwd": "/absolute/path/to/oxmcp"
+      "cwd": "${workspaceFolder}"
     }
   }
 }
 ```
-
-Replace `cwd` with your clone path. Reload MCP in Cursor after saving.
 
 ### Verify
 

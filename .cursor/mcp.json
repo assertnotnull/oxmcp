@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "oxmcp": {
+      "command": "bun",
+      "args": ["index.ts"],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}
