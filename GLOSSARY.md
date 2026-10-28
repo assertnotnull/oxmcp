@@ -39,3 +39,7 @@ _Avoid_: Query, search, fuzzy match
 **Oxmcp**:
 The read-only MCP server that queries the local Oxmgr daemon on behalf of coding agents (same machine only in v1).
 _Avoid_: MCP service, status server
+
+**Same-host invariant**:
+Oxmcp v1 assumes the MCP server and Oxmgr daemon run on one machine; remote Oxmgr access is undecided future work, not partial support in v1.
+_Avoid_: Local-only (vague), co-located (prefer same-host invariant)
