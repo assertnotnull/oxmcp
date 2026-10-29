@@ -24,7 +24,7 @@ jobs:
       - name: Assert tag matches package version
         run: |
           tag="${GITHUB_REF_NAME#v}"
-          pkg="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' src/version.ts | head -n1)"
+          pkg="$(sed -n 's/.*OXMCP_VERSION[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' src/version.ts | head -n1)"
           if [ "${tag}" != "${pkg}" ]; then
             echo "Tag v${tag} does not match src/version.ts (${pkg})"
             exit 1
